@@ -1,12 +1,17 @@
 package com.socratesdiaz.currencyapp.utils;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -47,5 +52,28 @@ public class WebServiceUtils {
         }
 
         return null;
+    }
+
+    private static String convertInputStreamToString(InputStream inputStream) {
+        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        String responseText;
+        try {
+            while ((responseText = bufferedReader.readLine()) != null) {
+                stringBuilder.append(responseText);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return stringBuilder.toString();
+    }
+
+    public static boolean hasInternetConnection(Context context) {
+        ConnectivityManager connectivityManager = ((ConnectivityManager)
+            context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager != null &&
+                connectivityManager.getActiveNetworkInfo() != null &&
+                connectivityManager.getActiveNetworkInfo().isConnected();
     }
 }
