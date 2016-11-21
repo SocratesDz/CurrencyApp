@@ -1,6 +1,9 @@
-package com.socratesdiaz.currencyapp;
+package com.socratesdiaz.currencyapp.views;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -8,24 +11,28 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import com.socratesdiaz.currencyapp.R;
+import com.socratesdiaz.currencyapp.models.Currency;
+import com.socratesdiaz.currencyapp.presenters.IMainPresenter;
+import com.socratesdiaz.currencyapp.presenters.MainPresenter;
+import com.socratesdiaz.currencyapp.receivers.CurrencyReceiver;
+import com.socratesdiaz.currencyapp.services.CurrencyService;
+import com.socratesdiaz.currencyapp.utils.Constants;
+import com.socratesdiaz.currencyapp.utils.LogUtils;
+
+public class MainActivity extends AppCompatActivity implements MainView {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private MainPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        mPresenter = new MainPresenter(this);
+        mPresenter.retrieveCurrencyExchangeRate();
     }
 
     @Override
@@ -48,5 +55,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }
