@@ -44,11 +44,11 @@ public class CurrencyDatabaseAdapter extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        clearCurrentTable(sqLiteDatabase);
+        clearCurrencyTable(sqLiteDatabase);
         onCreate(sqLiteDatabase);
     }
 
-    private void clearCurrentTable(SQLiteDatabase db) {
+    private void clearCurrencyTable(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS " + Constants.CURRENCY_TABLE);
     }
 }
