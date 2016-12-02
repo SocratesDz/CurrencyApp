@@ -70,4 +70,8 @@ public class CurrencyTableHelper {
 
         return currency;
     }
+
+    public void clearCurrencyTable() {
+        mAdapter.getWritableDatabase().delete(Constants.CURRENCY_TABLE, null, null);
+    }
 }
