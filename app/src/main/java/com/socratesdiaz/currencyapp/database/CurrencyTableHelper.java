@@ -2,9 +2,11 @@ package com.socratesdiaz.currencyapp.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.SQLException;
 
 import com.socratesdiaz.currencyapp.models.Currency;
 import com.socratesdiaz.currencyapp.utils.Constants;
+import com.socratesdiaz.currencyapp.utils.LogUtils;
 
 import java.util.ArrayList;
 
@@ -13,6 +15,7 @@ import java.util.ArrayList;
  */
 
 public class CurrencyTableHelper {
+    private static final String TAG = CurrencyTableHelper.class.getSimpleName();
     private CurrencyDatabaseAdapter mAdapter;
 
     public CurrencyTableHelper(CurrencyDatabaseAdapter adapter) {
@@ -22,6 +25,8 @@ public class CurrencyTableHelper {
     public long insertCurrency(Currency currency) {
         ArrayList<Currency> currencies = getCurrencyHistory(currency.getBase(), currency.getName(), currency.getDate());
         if(currencies.size() == 0) {
+            LogUtils.log(TAG, "No records found in DB");
+
             ContentValues initialValues = new ContentValues();
             initialValues.put(Constants.KEY_BASE, currency.getBase());
             initialValues.put(Constants.KEY_DATE, currency.getDate());
@@ -32,6 +37,8 @@ public class CurrencyTableHelper {
                     Constants.CURRENCY_TABLE, null, initialValues);
             mAdapter.getWritableDatabase().close();
             return id;
+        } else {
+            LogUtils.log(TAG, "Found record on DB");
         }
 
         return currencies.get(0).getId();
@@ -58,6 +65,20 @@ public class CurrencyTableHelper {
         }
 
         return currencies;
+    }
+
+    public Currency getCurrency(long id) throws SQLException {
+        Cursor cursor = mAdapter.getWritableDatabase().query(
+                Constants.CURRENCY_TABLE,
+                new String[] { Constants.KEY_ID, Constants.KEY_BASE, Constants.KEY_DATE,
+                        Constants.KEY_RATE, Constants.KEY_NAME },
+                Constants.KEY_ID + " = " + id, null, null, null, null);
+        if(cursor != null) {
+            if(cursor.moveToFirst()) {
+                return parseCurrency(cursor);
+            }
+        }
+        return null;
     }
 
     private Currency parseCurrency(Cursor cursor) {
