@@ -64,7 +64,7 @@ public class NotificationUtils {
             List<ActivityManager.RunningAppProcessInfo> runningProcesses =
                     activityManager.getRunningAppProcesses();
             for(ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-                if(processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_BACKGROUND) {
+                if(processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
                     for(String activeProcess : processInfo.pkgList) {
                         if(activeProcess.equals(context.getPackageName())) {
                             isInBackground = false;
